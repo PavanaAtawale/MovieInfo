@@ -1,1 +1,1 @@
-# IMDBAPIPractice
+# MovieInfo
