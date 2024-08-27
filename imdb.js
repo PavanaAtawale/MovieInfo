@@ -8,21 +8,24 @@ const options = {
 };
 
 async function showResult() {
-  document.querySelector("#search_phrase").style.setProperty("display", "block");
+  document.querySelector("#search_phrase").style.setProperty("visibility", "visible");
+  document.querySelector("#search_disp").style.setProperty("visibility", "visible");
   const results = document.querySelectorAll(".result");
-  results.forEach(r => r.style.setProperty("display", "block"));
+  results.forEach(r => r.style.setProperty("visibility", "visible"));
 } 
 
 async function hideResult() {
-  document.querySelector("#search_phrase").style.setProperty("display", "none");
+  document.querySelector("#search_phrase").style.setProperty("visibility", "hidden");
+  document.querySelector("#search_disp").style.setProperty("visibility", "hidden");
   const results = document.querySelectorAll(".result");
-  results.forEach(r => r.style.setProperty("display", "none"));
-  document.querySelector("#error").style.setProperty("display", "none");
+  results.forEach(r => r.style.setProperty("visibility", "hidden"));
+  document.querySelector("#error").style.setProperty("visibility", "hidden");
 }
 
 async function showError(e) {
-  document.querySelector("#search_phrase").style.setProperty("display", "block");
-  document.querySelector("#error").style.setProperty("display", "block");
+  document.querySelector("#search_phrase").style.setProperty("visibility", "visible");
+  document.querySelector("#search_disp").style.setProperty("visibility", "visible");
+  document.querySelector("#error").style.setProperty("visibility", "visible");
   document.querySelector("#error").innerHTML = e;
 }
 
@@ -56,7 +59,7 @@ window.onload = function(){
     const data = new FormData(e.target);
     const sp = data.get("movie");
     search(sp);
-    document.querySelector("#search_phrase").innerHTML = "You searched for <strong>'" + sp + "'</strong>";
+    document.querySelector("#search_phrase").innerHTML = sp;
     form.reset();
   });
 }

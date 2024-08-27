@@ -1,3 +1,40 @@
 #search_phrase {
     display: inline;
 }
+
+
+#main {
+    position: fixed;
+    padding: 20px;
+    top: 5%;
+    left: 5%;
+    bottom: 5%;
+    right: 5%;
+    overflow: auto;
+    background: aquamarine; /* Just to visualize the extent */
+    border-radius: 25px;
+}
+
+h1,#subheader  {
+    text-align: center;
+}
+
+#keyword {
+    width: 75%;
+}
+
+.result {
+    text-align: center;
+}
+
+#title, #title_disp {
+    display: inline;
+}
+
+#search_phrase {
+    font-weight: bold;
+}
+
+#error {
+    color: red;
+}
