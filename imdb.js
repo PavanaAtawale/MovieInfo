@@ -27,13 +27,16 @@ async function search(keyword) {
 
 
 window.onload = function(){
-    console.log("hello");
     const results = document.querySelectorAll(".result");
     results.forEach(r => r.style.setProperty("display", "none"));
-    document.querySelector('form').addEventListener('submit', (e) => {
+    const form = document.querySelector('form');
+    form.addEventListener('submit', (e) => {
         e.preventDefault();
         const data = new FormData(e.target);
-        console.log(data.get("movie"));
-        search(data.get("movie"));
+        const sp = data.get("movie");
+        //console.log(sp);
+        document.querySelector("#search_phrase").innerHTML = "You searched for <strong>'" + sp + "'</strong>";
+        search(sp);
+        form.reset();
       });
 }

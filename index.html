@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="imdb.js"></script>
+    <link href="style.css" rel="stylesheet"> 
+    <script src="imdb.js"></script>
 </head>
 
 <body>
@@ -11,10 +12,11 @@
 <form>
     <label for="keyword">Movie name:</label>
     <input type="text" id="keyword" name="movie">
-    <input type="submit" value="Search">
+    <input type="submit" id="search_btn" value="Search">
 </form>
 
 <div>
+    <p class="result" id="search_phrase">You searched for</p>
     <p class="result" id="title">Movie Name Here</p>
     <p class="result" id="year">Movie Name Here</p>
     <p class="result" id="cast">Cast</p>
