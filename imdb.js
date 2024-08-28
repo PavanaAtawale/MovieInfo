@@ -1,3 +1,4 @@
+// const lodash = require('lodash');
 const search_url = 'https://imdb-com.p.rapidapi.com/auto-complete?query=';
 const actor_knowfor_url = 'https://imdb-com.p.rapidapi.com/actor/get-know-for?nconst=';
 const options = {
@@ -8,8 +9,11 @@ const options = {
 	}
 };
 
+let doneLookup = false;
+
 async function showMovieResult() {
   hideActorResult();
+  hideError();
   document.querySelector("#search_phrase").style.setProperty("display", "inline");
   document.querySelector("#search_disp").style.setProperty("display", "block");
   const mr = document.querySelectorAll(".movie_result");
@@ -23,6 +27,7 @@ async function hideMovieResult() {
 
 async function showActorResult() {
   hideMovieResult();
+  hideError();
   document.querySelector("#search_phrase").style.setProperty("display", "inline");
   document.querySelector("#search_disp").style.setProperty("display", "block");
   const ar = document.querySelectorAll(".actor_result");
@@ -50,6 +55,12 @@ async function showError(e) {
   document.querySelector("#error").innerHTML = e;
 }
 
+async function hideError() {
+  document.querySelector("#search_phrase").style.setProperty("display", "none");
+  document.querySelector("#search_disp").style.setProperty("display", "none");
+  document.querySelector("#error").style.setProperty("display", "none");
+}
+
 async function search(keyword) {
   try {
     let str = search_url + keyword;
@@ -57,19 +68,16 @@ async function search(keyword) {
     const result = await response.json();
     console.log(result);
     if(result.status ==  true) {
-      let qid = result.data.d[0].id;
-      if(qid.startsWith("tt")) {
-        document.querySelector("#title").innerHTML = result.data.d[0].l;
-        document.querySelector("#cast").innerHTML = result.data.d[0].s;
-        document.querySelector("#year").innerHTML = result.data.d[0].y;
-        showMovieResult();
-      } else if(qid.startsWith("nm")) {
-        document.querySelector("#actor").innerHTML = result.data.d[0].l;
-        //document.querySelector("#known").innerHTML = result.data.d[0].s;
-        actor_deets(qid);
-        showActorResult();
-      } else {
+      let i = 0;
+      let qid = result.data.d[i].id;
+      lookup(qid, i, result);
+      console.log(doneLookup + " " + qid);
+      while(!doneLookup && i < result.data.d.length) {
         showError("We couldn't find an answer. Try again!");
+        i++;
+        qid = result.data.d[i].id;
+        lookup(qid, i, result);
+        console.log(doneLookup + " " + qid);
       }
     } else {
       showError(result.message);
@@ -80,6 +88,21 @@ async function search(keyword) {
   }
 }
 
+async function lookup(qid, i, result) {
+  if(qid.startsWith("tt")) {
+    document.querySelector("#title").innerHTML = result.data.d[i].l;
+    document.querySelector("#cast").innerHTML = result.data.d[i].s;
+    document.querySelector("#year").innerHTML = result.data.d[i].y;
+    showMovieResult();
+    doneLookup = true;
+  } else if(qid.startsWith("nm")) {
+    document.querySelector("#actor").innerHTML = result.data.d[i].l;
+    actor_deets(qid);
+    showActorResult();
+    doneLookup = true;
+  }else doneLookup = false;
+}
+
 async function actor_deets(aid) {
   try {
     let str = actor_knowfor_url + aid;
@@ -87,25 +110,63 @@ async function actor_deets(aid) {
     const result = await response.json();
     console.log(result);
     if(result.status ==  true) {
-      let list = "<br><ul>";
+      let roles = new Map();
+      let years = new Map();
+      // let list = "<br><ul>";
       for(let i = 0; i < result.data.name.knownFor.edges.length; i++) {
-        list += "<li>";
-        list += result.data.name.knownFor.edges[i].node.title.titleText.text;
-        list += "</li>"
+        // list += "<li>";
+        // list += result.data.name.knownFor.edges[i].node.title.titleText.text;
+        // list += "</li>";
+        if(result.data.name.knownFor.edges[i].node.credit.__typename == "Cast") {
+          let year = result.data.name.knownFor.edges[i].node.title.releaseYear;
+          if(year != null) year = year.year;
+          else year = 3000;
+          let film = result.data.name.knownFor.edges[i].node.title.titleText.text;
+          let role = "";
+          let characters = result.data.name.knownFor.edges[i].node.credit.characters;
+          if(characters == null) role = "Unknown";
+          else {
+            for(let j = 0; j < characters.length; j++) {
+              role += characters[j].name;
+              role += ", ";
+            }
+            role = role.substring(0, role.length-2);
+          }
+          roles.set(film, role);
+          years.set(film, year);
+        }
+        years = new Map(Array.from(years).sort((a, b) => a[1] - b[1]));
+        // years = new Map(lodash.sortBy(Array.from(years), [(entry) => entry[1]]));
       }
-      list += "</ul>"
-      document.querySelector("#known").innerHTML = list;
+      // list += "</ul>"
+      // document.querySelector("#known").innerHTML = list;
+      updateActorResult(roles, years);
       showActorResult();
     } else {
       showError(result.message);
     }
   } catch (error) {
+    showError("Something went wrong, try again");
     console.error(error);
   }
 }
 
+function updateActorResult(roles, years) {
+  let str = "<th>Year</th><th>Film</th><th>Role</th>";
+  years.forEach((value, key) => {
+    str += "<tr>";
+    if(value == 3000) str += "<td>" + "Unknown" + "</td>";
+    else str += "<td>" + value + "</td>";
+    str += "<td>" + key + "</td>";
+    str += "<td>" + roles.get(key) + "</td>";
+    str += "</tr>";
+  })
+  document.querySelector("#known").innerHTML = str;
+}
+
 window.onload = function(){
   hideResult();
+  hideError();
   const form = document.querySelector('form');
   form.addEventListener('submit', (e) => {
     e.preventDefault();

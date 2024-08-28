@@ -35,3 +35,25 @@ h1,#subheader  {
     color: red;
 }
 
+#known {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#known td, #customers th {
+    border: 3px solid gainsboro;
+    padding: 8px;
+}
+
+#known tr:nth-child(even){background-color: whitesmoke;}
+#known tr:nth-child(even){background-color: goldenrod;}
+
+#known tr:hover {background-color: #ffe5fc;}
+
+#known th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: mediumpurple;
+    color: white;
+}
