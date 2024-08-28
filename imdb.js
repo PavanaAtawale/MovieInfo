@@ -1,9 +1,19 @@
-const url = 'https://imdb188.p.rapidapi.com/api/v1/searchIMDB?query=';
+// Original API 
+// const url = 'https://imdb188.p.rapidapi.com/api/v1/searchIMDB?query=';
+// const options = {
+// 	method: 'GET',
+// 	headers: {
+// 		'x-rapidapi-key': '8679570c5emsh871f0fd3d68e512p131979jsnf9f75a04d014',
+// 		'x-rapidapi-host': 'imdb188.p.rapidapi.com'
+// 	}
+// };
+
+const url = 'https://imdb-com.p.rapidapi.com/auto-complete?query=';
 const options = {
 	method: 'GET',
 	headers: {
 		'x-rapidapi-key': '8679570c5emsh871f0fd3d68e512p131979jsnf9f75a04d014',
-		'x-rapidapi-host': 'imdb188.p.rapidapi.com'
+		'x-rapidapi-host': 'imdb-com.p.rapidapi.com'
 	}
 };
 
@@ -29,7 +39,7 @@ async function showError(e) {
   document.querySelector("#error").innerHTML = e;
 }
 
-async function search(keyword) {
+async function searchOG(keyword) {
   try {
     let str = url + keyword;
     const response = await fetch(str, options);
@@ -50,6 +60,27 @@ async function search(keyword) {
   }
 }
 
+async function search(keyword) {
+  try {
+    let str = url + keyword;
+    const response = await fetch(str, options);
+    const result = await response.json();
+    console.log(result);
+    if(result.status ==  true) {
+      let id = result.data.d[0].id;
+      document.querySelector("#title").innerHTML = result.data.d[0].l;
+      document.querySelector("#cast").innerHTML = result.data.d[0].s;
+      document.querySelector("#year").innerHTML = result.data.d[0].y;
+      showResult();
+    } else {
+      hideResult();
+      showError(result.message);
+    }
+    
+  } catch (error) {
+    console.error(error);
+  }
+}
 
 window.onload = function(){
   hideResult();
