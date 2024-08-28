@@ -1,7 +1,3 @@
-#search_phrase {
-    display: inline;
-}
-
 
 #main {
     position: fixed;
@@ -23,18 +19,19 @@ h1,#subheader  {
     width: 75%;
 }
 
-.result {
+.movie_result, .actor_result {
     text-align: center;
 }
 
-#title, #title_disp {
-    display: inline;
+#search_phrase, .disp {
+    font-weight: bold;
 }
 
-#search_phrase {
-    font-weight: bold;
+.val {
+    font-weight: normal;
 }
 
 #error {
     color: red;
 }
+

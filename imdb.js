@@ -17,25 +17,45 @@ const options = {
 	}
 };
 
-async function showResult() {
-  document.querySelector("#search_phrase").style.setProperty("visibility", "visible");
-  document.querySelector("#search_disp").style.setProperty("visibility", "visible");
-  const results = document.querySelectorAll(".result");
-  results.forEach(r => r.style.setProperty("visibility", "visible"));
+async function showMovieResult() {
+  hideActorResult();
+  document.querySelector("#search_phrase").style.setProperty("display", "inline");
+  document.querySelector("#search_disp").style.setProperty("display", "block");
+  const mr = document.querySelectorAll(".movie_result");
+  mr.forEach(r => r.style.setProperty("display", ""));
 } 
 
+async function hideMovieResult() {
+  const mr = document.querySelectorAll(".movie_result");
+  mr.forEach(r => r.style.setProperty("display", "none"));
+}
+
+async function showActorResult() {
+  hideMovieResult();
+  document.querySelector("#search_phrase").style.setProperty("display", "inline");
+  document.querySelector("#search_disp").style.setProperty("display", "block");
+  const ar = document.querySelectorAll(".actor_result");
+  ar.forEach(r => r.style.setProperty("display", ""));
+}
+
+async function hideActorResult() {
+  const ar = document.querySelectorAll(".actor_result");
+  ar.forEach(r => r.style.setProperty("display", "none"));
+}
+
 async function hideResult() {
-  document.querySelector("#search_phrase").style.setProperty("visibility", "hidden");
-  document.querySelector("#search_disp").style.setProperty("visibility", "hidden");
-  const results = document.querySelectorAll(".result");
-  results.forEach(r => r.style.setProperty("visibility", "hidden"));
-  document.querySelector("#error").style.setProperty("visibility", "hidden");
+  document.querySelector("#search_phrase").style.setProperty("display", "none");
+  document.querySelector("#search_disp").style.setProperty("display", "none");
+  hideMovieResult();
+  hideActorResult();
+  document.querySelector("#error").style.setProperty("display", "none");
 }
 
 async function showError(e) {
-  document.querySelector("#search_phrase").style.setProperty("visibility", "visible");
-  document.querySelector("#search_disp").style.setProperty("visibility", "visible");
-  document.querySelector("#error").style.setProperty("visibility", "visible");
+  hideResult();
+  document.querySelector("#search_phrase").style.setProperty("display", "inline");
+  document.querySelector("#search_disp").style.setProperty("display", "block");
+  document.querySelector("#error").style.setProperty("display", "block");
   document.querySelector("#error").innerHTML = e;
 }
 
@@ -67,13 +87,20 @@ async function search(keyword) {
     const result = await response.json();
     console.log(result);
     if(result.status ==  true) {
-      let id = result.data.d[0].id;
-      document.querySelector("#title").innerHTML = result.data.d[0].l;
-      document.querySelector("#cast").innerHTML = result.data.d[0].s;
-      document.querySelector("#year").innerHTML = result.data.d[0].y;
-      showResult();
+      let qid = result.data.d[0].id;
+      if(qid.startsWith("tt")) {
+        document.querySelector("#title").innerHTML = result.data.d[0].l;
+        document.querySelector("#cast").innerHTML = result.data.d[0].s;
+        document.querySelector("#year").innerHTML = result.data.d[0].y;
+        showMovieResult();
+      } else if(qid.startsWith("nm")) {
+        document.querySelector("#actor").innerHTML = result.data.d[0].l;
+        document.querySelector("#known").innerHTML = result.data.d[0].s;
+        showActorResult();
+      } else {
+        showError("We couldn't find an answer. Try again!");
+      }
     } else {
-      hideResult();
       showError(result.message);
     }
     
