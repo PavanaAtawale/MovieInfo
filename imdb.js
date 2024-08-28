@@ -1,14 +1,5 @@
-// Original API 
-// const url = 'https://imdb188.p.rapidapi.com/api/v1/searchIMDB?query=';
-// const options = {
-// 	method: 'GET',
-// 	headers: {
-// 		'x-rapidapi-key': '8679570c5emsh871f0fd3d68e512p131979jsnf9f75a04d014',
-// 		'x-rapidapi-host': 'imdb188.p.rapidapi.com'
-// 	}
-// };
-
-const url = 'https://imdb-com.p.rapidapi.com/auto-complete?query=';
+const search_url = 'https://imdb-com.p.rapidapi.com/auto-complete?query=';
+const actor_knowfor_url = 'https://imdb-com.p.rapidapi.com/actor/get-know-for?nconst=';
 const options = {
 	method: 'GET',
 	headers: {
@@ -59,30 +50,9 @@ async function showError(e) {
   document.querySelector("#error").innerHTML = e;
 }
 
-async function searchOG(keyword) {
-  try {
-    let str = url + keyword;
-    const response = await fetch(str, options);
-    const result = await response.json();
-    console.log(result);
-    if(result.status ==  true) {
-      document.querySelector("#title").innerHTML = result.data[0].title;
-      document.querySelector("#cast").innerHTML = result.data[0].stars;
-      document.querySelector("#year").innerHTML = result.data[0].year;
-      showResult();
-    } else {
-      hideResult();
-      showError(result.message);
-    }
-    
-  } catch (error) {
-    console.error(error);
-  }
-}
-
 async function search(keyword) {
   try {
-    let str = url + keyword;
+    let str = search_url + keyword;
     const response = await fetch(str, options);
     const result = await response.json();
     console.log(result);
@@ -95,7 +65,8 @@ async function search(keyword) {
         showMovieResult();
       } else if(qid.startsWith("nm")) {
         document.querySelector("#actor").innerHTML = result.data.d[0].l;
-        document.querySelector("#known").innerHTML = result.data.d[0].s;
+        //document.querySelector("#known").innerHTML = result.data.d[0].s;
+        actor_deets(qid);
         showActorResult();
       } else {
         showError("We couldn't find an answer. Try again!");
@@ -104,6 +75,30 @@ async function search(keyword) {
       showError(result.message);
     }
     
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+async function actor_deets(aid) {
+  try {
+    let str = actor_knowfor_url + aid;
+    const response = await fetch(str, options);
+    const result = await response.json();
+    console.log(result);
+    if(result.status ==  true) {
+      let list = "<br><ul>";
+      for(let i = 0; i < result.data.name.knownFor.edges.length; i++) {
+        list += "<li>";
+        list += result.data.name.knownFor.edges[i].node.title.titleText.text;
+        list += "</li>"
+      }
+      list += "</ul>"
+      document.querySelector("#known").innerHTML = list;
+      showActorResult();
+    } else {
+      showError(result.message);
+    }
   } catch (error) {
     console.error(error);
   }
@@ -121,3 +116,34 @@ window.onload = function(){
     form.reset();
   });
 }
+
+// Original API 
+// const url = 'https://imdb188.p.rapidapi.com/api/v1/searchIMDB?query=';
+// const options = {
+// 	method: 'GET',
+// 	headers: {
+// 		'x-rapidapi-key': '8679570c5emsh871f0fd3d68e512p131979jsnf9f75a04d014',
+// 		'x-rapidapi-host': 'imdb188.p.rapidapi.com'
+// 	}
+// };
+
+// async function searchOG(keyword) {
+//   try {
+//     let str = url + keyword;
+//     const response = await fetch(str, options);
+//     const result = await response.json();
+//     console.log(result);
+//     if(result.status ==  true) {
+//       document.querySelector("#title").innerHTML = result.data[0].title;
+//       document.querySelector("#cast").innerHTML = result.data[0].stars;
+//       document.querySelector("#year").innerHTML = result.data[0].year;
+//       showResult();
+//     } else {
+//       hideResult();
+//       showError(result.message);
+//     }
+    
+//   } catch (error) {
+//     console.error(error);
+//   }
+// }
