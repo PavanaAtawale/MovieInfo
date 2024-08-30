@@ -27,6 +27,10 @@ h1,#subheader  {
     font-weight: bold;
 }
 
+#search_phrase {
+    color: pink;
+}
+
 .val {
     font-weight: normal;
 }

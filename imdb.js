@@ -80,11 +80,13 @@ async function search(keyword) {
         console.log(doneLookup + " " + qid);
       }
     } else {
-      showError(result.message);
+      showError("Something went wrong, try again");
+      console.error("Error" + result.message);
     }
     
   } catch (error) {
-    console.error(error);
+      showError("Something went wrong, try again");
+      console.error("Error" + error);
   }
 }
 
@@ -143,11 +145,12 @@ async function actor_deets(aid) {
       updateActorResult(roles, years);
       showActorResult();
     } else {
-      showError(result.message);
+      showError("Something went wrong, try again");
+      console.error("Error" + error);
     }
   } catch (error) {
     showError("Something went wrong, try again");
-    console.error(error);
+    console.error("Error" + error);
   }
 }
 
@@ -173,7 +176,7 @@ window.onload = function(){
     const data = new FormData(e.target);
     const sp = data.get("movie");
     search(sp);
-    document.querySelector("#search_phrase").innerHTML = sp;
+    document.querySelector("#search_phrase").innerHTML = "\"" + sp + "\"";
     form.reset();
   });
 }
